@@ -17,11 +17,9 @@ function Profile({ children, ...rest }) {
         <NextLink href={'/'} passHref>
           <Link>
             <User src={'/assets/ava.jpg'} name={BLOG.author} altText="avatar">
-              {BLOG.introduce}
+              {BLOG.summary}
             </User>
-            {/* <User.Link href="https://github.com/Miayawlr">
-             @wlr_kanno
-           </User.Link> */}
+            {/* <User.Link href="https://github.com/Miayawlr">@wlr_kanno</User.Link> */}
           </Link>
         </NextLink>
       </RowUser>

@@ -10,8 +10,7 @@ const options = {
   day: 'numeric',
 }
 const getDateString = (date) => {
-  let d = new Date(date)
-  // console.log(d)
+  const d = new Date(date)
   if (`${d}` === 'Invalid Date') return ''
   return new Date(date)
     .toLocaleString('zh-cn', options)
@@ -27,7 +26,7 @@ function ArticleItem({ data = {} }) {
           {data.name}
           <span
             className={'date'}
-            dangerouslySetInnerHTML={{ __html: getDateString(data.date) }}
+            dangerouslySetInnerHTML={{ __html: getDateString(data.meta.date) }}
           ></span>
         </Link>
       </NextLink>

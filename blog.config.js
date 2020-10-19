@@ -1,7 +1,7 @@
 const BLOG = {
   author: 'Mia',
   title: 'mia.bio',
-  introduce: "Hi,I'm Mia.A web Front-end developer",
+  introduce: "Hi,I'm Mia.一个前端萌新",
   summary: '前端萌新,喜好音乐/偶尔恰二刺螈',
   language: 'zh-cn',
   email: '812137533@qq.com',
