@@ -1,0 +1,29 @@
+{
+  "name": "mia.bio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@geist-ui/react": "^2.1.0-canary.0",
+    "@geist-ui/react-icons": "^1.0.0",
+    "@mapbox/rehype-prism": "^0.5.0",
+    "@mdx-js/loader": "^1.6.18",
+    "@next/mdx": "^9.5.5",
+    "add": "^2.0.6",
+    "babel-plugin-styled-components": "^1.11.1",
+    "extract-mdx-metadata": "^1.0.0",
+    "fs-extra": "^9.0.1",
+    "next": "9.5.5",
+    "prompt-sync": "^4.2.0",
+    "prompt-sync-history": "^1.0.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "rehype-join-line": "^1.0.2",
+    "styled-components": "^5.2.0",
+    "yarn": "^1.22.10"
+  }
+}
