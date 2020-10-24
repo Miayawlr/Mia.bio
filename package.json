@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "dev": " npm run collect && next dev",
+    "build": "npm run build && next build ",
+    "post":"node scripts/create.js",
+    "start": " npm run collect && next start ",
+    "collect":"node scripts/collect-meta.js"
+ 
   },
   "dependencies": {
     "@geist-ui/react": "^2.1.0-canary.0",

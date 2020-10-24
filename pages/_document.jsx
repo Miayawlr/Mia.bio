@@ -1,6 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-//  zeit-ui/react by witt
 import { CssBaseline } from '@geist-ui/react'
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {

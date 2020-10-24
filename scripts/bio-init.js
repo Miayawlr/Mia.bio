@@ -1,0 +1,5 @@
+const fs = require('fs-extra')
+const path = require('path')
+const postsPath = path.join(__dirname, '../pages/posts')
+const aboveMePath = path.join(__dirname, '../pages/aboveMe')
+const dataPath = path.join(__dirname, '../lib/data/metaData.json')

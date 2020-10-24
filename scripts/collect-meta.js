@@ -1,25 +1,51 @@
 const fs = require('fs-extra')
 const path = require('path')
 const extractMetadata = require('extract-mdx-metadata')
-const pagePrefix = path.join(__dirname, '../pages')
-const docsDir = path.join(__dirname, '../pages')
-const targetPath = path.join(__dirname, '../lib/data/metadata.json')
-
-const getMetadata = async (files, parentPath) => {
+const pagePath = path.join(__dirname, '../pages')
+const targetPath = path.join(__dirname, '../lib/data/metaData.json')
+const getMetaData = async (files, parent_path) => {
+  // return new Promise((resolve, reject) => {
+  //   const filesDir = files.filter((name) => !name.includes('.'))
+  //   resolve(filesDir)
+  // }).then((res) => {
+  //   return Promise.all(
+  //     res.map(async (file) => {
+  //       const filePath = path.join(pagePath, file)
+  //       console.log(filePath)
+  //       const isDir = fs.statSync(filePath).isDirectory()
+  //       if (isDir) {
+  //         const children = await fs.readdir(filePath)
+  //         return Promise.all(
+  //           children.map(async (file) => {
+  //             const childrenMetaData = await path.join(filePath, file)
+  //             const content = await fs.readFile(childrenMetaData, 'utf-8')
+  //             // const meta = await extractMetadata(content)
+  //             const url = childrenMetaData
+  //               .replace(pagePath, '')
+  //               .replace('.mdx', '')
+  //             return { name: file, children: [{ url }] }
+  //           })
+  //         )
+  //       }
+  //     })
+  //   )
+  // })
   return Promise.all(
     files
       .filter((name) => name.endsWith('.mdx') || !name.includes('.'))
       .map(async (file) => {
-        const filePath = path.join(parentPath, file)
-        const isDirectory = fs.statSync(filePath).isDirectory()
-        if (isDirectory) {
+        const filePath = path.join(parent_path, file)
+        const isDir = fs.statSync(filePath).isDirectory()
+        if (isDir) {
           const children = await fs.readdir(filePath)
-          const childrenMetadata = await getMetadata(children, filePath)
-          return { name: file, children: childrenMetadata }
+          const childrenMetaData = await getMetaData(children, filePath)
+          return { name: file, children: childrenMetaData }
         }
         const content = await fs.readFile(filePath, 'utf-8')
+        // console.log(content)
         const meta = await extractMetadata(content)
-        const url = filePath.replace(pagePrefix, '').replace('.mdx', '')
+        // console.log(meta)
+        const url = filePath.replace(pagePath, '').replace('.mdx', '')
         return { name: meta.title || file, url, meta }
       })
   )
@@ -71,15 +97,17 @@ const sortPosts = (data) => {
   })
 }
 
-;(async () => {
+!(async () => {
   try {
-    const files = await fs.readdir(docsDir)
-    const data = await getMetadata(files, docsDir)
+    // 读取文件目录
+    const files = await fs.readdir(pagePath)
+    const data = await getMetaData(files, pagePath)
+    // console.log(data)
     const sorted = sortPosts(data)
+    // console.log(sorted)
     await fs.ensureFile(targetPath)
     await fs.writeJson(targetPath, sorted)
-  } catch (e) {
-    console.log(e)
-    process.exit(1)
+  } catch (error) {
+    console.log(error)
   }
 })()
