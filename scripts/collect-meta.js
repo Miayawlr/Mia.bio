@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const extractMetadata = require('extract-mdx-metadata')
+const extractMdxdata = require('extract-mdx-metadata')
 const pagePath = path.join(__dirname, '../pages')
 const targetPath = path.join(__dirname, '../lib/data/metaData.json')
 const getMetaData = async (files, parent_path) => {
@@ -42,9 +42,9 @@ const getMetaData = async (files, parent_path) => {
           return { name: file, children: childrenMetaData }
         }
         const content = await fs.readFile(filePath, 'utf-8')
-        // console.log(content)
-        const meta = await extractMetadata(content)
+        const meta = await extractMdxdata(content)
         // console.log(meta)
+        // console.log(content)
         const url = filePath.replace(pagePath, '').replace('.mdx', '')
         return { name: meta.title || file, url, meta }
       })
@@ -102,9 +102,7 @@ const sortPosts = (data) => {
     // 读取文件目录
     const files = await fs.readdir(pagePath)
     const data = await getMetaData(files, pagePath)
-    // console.log(data)
     const sorted = sortPosts(data)
-    // console.log(sorted)
     await fs.ensureFile(targetPath)
     await fs.writeJson(targetPath, sorted)
   } catch (error) {

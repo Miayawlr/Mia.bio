@@ -5,14 +5,14 @@
   "scripts": {
     "dev": " npm run collect && next dev",
     "build": "npm run build && next build ",
-    "post":"node scripts/create.js",
+    "post": "node scripts/create.js",
     "start": " npm run collect && next start ",
-    "collect":"node scripts/collect-meta.js"
- 
+    "collect": "node scripts/collect-meta.js"
   },
   "dependencies": {
-    "@geist-ui/react": "^2.1.0-canary.0",
+    "@geist-ui/react": "^2.1.0-canary.1",
     "@geist-ui/react-icons": "^1.0.0",
+    "@geist-ui/react-prism": "^1.0.1",
     "@mapbox/rehype-prism": "^0.5.0",
     "@mdx-js/loader": "^1.6.18",
     "@next/mdx": "^9.5.5",
@@ -21,6 +21,7 @@
     "extract-mdx-metadata": "^1.0.0",
     "fs-extra": "^9.0.1",
     "next": "9.5.5",
+    "prism-react-renderer": "^1.1.1",
     "prompt-sync": "^4.2.0",
     "prompt-sync-history": "^1.0.1",
     "react": "16.13.1",

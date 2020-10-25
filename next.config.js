@@ -1,10 +1,10 @@
 const paragraphs = require('rehype-join-line')
-const codeHighLight = require('@mapbox/rehype-prism')
+const rehypePrism = require('@mapbox/rehype-prism')
 const withMDX = require('@next/mdx')({
-  extension: /\.mdx?$/,
+  extension: /\.(md|mdx)?$/,
   // 	Array of rehype plugins to manipulate the MDXHAST
   options: {
-    rehypePlugins: [paragraphs, codeHighLight],
+    rehypePlugins: [rehypePrism, paragraphs],
   },
 })
 

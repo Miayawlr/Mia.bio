@@ -1184,10 +1184,15 @@
   resolved "https://registry.npm.taobao.org/@geist-ui/react-icons/download/@geist-ui/react-icons-1.0.0.tgz#2b08f155a0d57549eb8456143e5d51b71b0a11f1"
   integrity sha1-KwjxVaDVdUnrhFYUPl1RtxsKEfE=
 
-"@geist-ui/react@^2.1.0-canary.0":
-  version "2.1.0-canary.0"
-  resolved "https://registry.npm.taobao.org/@geist-ui/react/download/@geist-ui/react-2.1.0-canary.0.tgz#85cfd1f74b2ce15449ee4be59af315e733667d18"
-  integrity sha1-hc/R90ss4VRJ7kvlmvMV5zNmfRg=
+"@geist-ui/react-prism@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npm.taobao.org/@geist-ui/react-prism/download/@geist-ui/react-prism-1.0.1.tgz#020497abb14967e0103ea7e51d5d2d9babedffd7"
+  integrity sha1-AgSXq7FJZ+AQPqflHV0tm6vt/9c=
+
+"@geist-ui/react@^2.1.0-canary.1":
+  version "2.1.0-canary.1"
+  resolved "https://registry.npm.taobao.org/@geist-ui/react/download/@geist-ui/react-2.1.0-canary.1.tgz#68a7a5458466799dfcb3f5458a4bf6f3ee2dc113"
+  integrity sha1-aKelRYRmeZ38s/VFikv28+4twRM=
   dependencies:
     styled-jsx "^3.2.5"
 
@@ -4727,6 +4732,11 @@ postcss@^7.0.14, postcss@^7.0.26, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.
     chalk "^2.4.2"
     source-map "^0.6.1"
     supports-color "^6.1.0"
+
+prism-react-renderer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npm.taobao.org/prism-react-renderer/download/prism-react-renderer-1.1.1.tgz#1c1be61b1eb9446a146ca7a50b7bcf36f2a70a44"
+  integrity sha1-HBvmGx65RGoUbKelC3vPNvKnCkQ=
 
 prismjs@~1.22.0:
   version "1.22.0"

@@ -4,6 +4,7 @@ import { GeistProvider, CssBaseline, useTheme } from '@geist-ui/react'
 import { ThemeProvider } from 'styled-components'
 import ThemeConfig from '../lib/components/ThemeConfig'
 import useDomClean from '../lib/utils/use-dom-clean'
+import { PrismBaseline } from '@geist-ui/react-prism'
 import BLOG from 'blog.config'
 function MyApp({ Component, pageProps }) {
   const [themeType, setThemeType] = useState('light')
@@ -31,6 +32,7 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <GeistProvider theme={{ type: themeType }}>
         <CssBaseline />
+        <PrismBaseline />
         <ThemeProvider theme={theme}>
           <ThemeConfig onChange={changeHandle}>
             <Component {...pageProps} />
