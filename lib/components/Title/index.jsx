@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { Activity } from '@geist-ui/react-icons'
-
 import StyledTitle, { DateContent } from './style'
 import { useTheme } from '@geist-ui/react'
 import { useRouter } from 'next/router'

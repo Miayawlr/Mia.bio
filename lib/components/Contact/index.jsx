@@ -19,7 +19,11 @@ function Contact({ children, ...rest }) {
             </Link>
           )}
           {BLOG.email && (
-            <Link aria-label={'email'} href={BLOG.email} {...linkProps}>
+            <Link
+              aria-label={'email'}
+              href={`mailto:${BLOG.email}`}
+              {...linkProps}
+            >
               Email
             </Link>
           )}

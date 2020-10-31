@@ -4,32 +4,6 @@ const extractMdxdata = require('extract-mdx-metadata')
 const pagePath = path.join(__dirname, '../pages')
 const targetPath = path.join(__dirname, '../lib/data/metaData.json')
 const getMetaData = async (files, parent_path) => {
-  // return new Promise((resolve, reject) => {
-  //   const filesDir = files.filter((name) => !name.includes('.'))
-  //   resolve(filesDir)
-  // }).then((res) => {
-  //   return Promise.all(
-  //     res.map(async (file) => {
-  //       const filePath = path.join(pagePath, file)
-  //       console.log(filePath)
-  //       const isDir = fs.statSync(filePath).isDirectory()
-  //       if (isDir) {
-  //         const children = await fs.readdir(filePath)
-  //         return Promise.all(
-  //           children.map(async (file) => {
-  //             const childrenMetaData = await path.join(filePath, file)
-  //             const content = await fs.readFile(childrenMetaData, 'utf-8')
-  //             // const meta = await extractMetadata(content)
-  //             const url = childrenMetaData
-  //               .replace(pagePath, '')
-  //               .replace('.mdx', '')
-  //             return { name: file, children: [{ url }] }
-  //           })
-  //         )
-  //       }
-  //     })
-  //   )
-  // })
   return Promise.all(
     files
       .filter((name) => name.endsWith('.mdx') || !name.includes('.'))
@@ -43,7 +17,7 @@ const getMetaData = async (files, parent_path) => {
         }
         const content = await fs.readFile(filePath, 'utf-8')
         const meta = await extractMdxdata(content)
-        // console.log(meta)
+        console.log(meta)
         // console.log(content)
         const url = filePath.replace(pagePath, '').replace('.mdx', '')
         return { name: meta.title || file, url, meta }

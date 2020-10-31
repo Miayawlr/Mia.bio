@@ -1,0 +1,133 @@
+import Layout from 'lib/components/layout'
+import { Spacer, Link } from '@geist-ui/react'
+
+export const meta = {
+  title: '如何写好JS',
+  date: '2020-10-31T08:46:35.626Z',
+  description: '',
+}
+
+好的代码不仅是在性能、体积、内容,更重要的是`code once`
+
+我们知道代码是写给人看的。而机器对代码的识别程度远胜于人类。
+因此要写出好的代码需要脱离自己的视角,以他人的眼光进行审视,理解整个
+项目的上下文含义。而代码的架构,拆分,组合,技巧等一系列编写则给予阅读
+者理解代码的成本降低,能更好的理解代码带来的内涵以及思想。我们致力于
+构建优秀的代码意味着不只是以代码作为工具。更是将它物化做一个感性的
+人,透过这个平台将他作为传达智慧、思想的伙伴。这是一种将代码感性化的
+方式。同时也是对构造者的思维与技术上的锤炼。
+
+<Spacer />
+
+#### 1.优先使用`const`
+
+`const`在 JavaScript 中不仅可以命名常量,也可以用来声明对象和数组。因为`const`可以保证内存地址的<s>唯一性</s>(不可变性)。
+在编写 JavaScript 应用程序中,我更推荐大家使用`const` 替代`var`和`let`,向`Immutable`风格靠拢。
+这里引用一篇有赞团队关于`Immutable`<Link href={'https://segmentfault.com/a/1190000017294051'} icon color>风格的指南</Link>
+在编程思维上开始摒弃副作用。更多的使用`const`进行开发。虽然这一项操作可能使声明项增多,但是对开发者和阅读者来说,
+更少的心智负担和语义化命名会使代码质量大大上升。
+
+```js
+//bad
+let count =0
+[...args].map(item=>count+=item)
+
+//good
+
+const count = [...args].reduce((pre,item)=>{
+  return pre+item
+},0)
+```
+
+<Spacer />
+
+#### 2.优先使用函数表达式
+
+我们可以使用函数表达式来创建一个命名函数。结合上文所述我们可以使用`const`配合 es6 中的箭头函数形成一个*func*
+例如:`const func =()=>{}`。相比于传统的`var func =function(){}`所带来的好处是
+
+- 语义化指定的函数是不可变更的(`unChange`)
+- 语义化`const`定义的函数表达式无法被覆盖。(无法在当前作用域内重复声明)
+- 传统的函数声明在解析式存在(LHS,RHS)作用于提升,造成先使用后声明的操作。非常不利于代码的阅读。
+- 理想的可读性代码应该是先声明后使用。
+- 减少`this`指向。保证 this 的唯一性。
+
+```js
+//bad
+func()
+function func() {
+  console.log('this is bad')
+}
+
+//good
+const func = () => {
+  console.log('this is good')
+}
+func()
+```
+
+#### 3.函数不要有过多形参
+
+在不断拓展的业务的需求中,我们的函数会有越来越多的形参。这样带来的后果就是不利已维护和阅读。
+我们并不是一定要让所有的函数都实现`curry`(柯里化)
+
+在调用较多参数的函数时,我们不仅要紧记每个参数的顺序还要对空缺的参数进行补位,如传递(`null`,,`undefined`等)。
+这会导致在函数的声明和调用的代码中被迫增加开发者的心智负担和逻辑变量判断声明。在面对多形参的*func*时,我们应该合理的
+拆分参数。或者将部分功能剥离成一个新的*func*
+
+```js
+//这里是一个业务开发get请求的模拟流程 bad
+const getFunc = (page, page_size, id, name) => {
+  $ajax({
+     url:`bad?page=${page}...name=${name}`,
+     method:'get'
+    })
+}
+getFunc(1,...,bad)
+
+//good
+const funcRest=(url,rest)=>{
+  ...
+  return url
+}
+const getFunc=(page,page_size,...rest)=>{
+ let url = `good?page=${page}&page_size=${page_size}`
+ url = funcRest(url,rest)
+ $ajax({
+   url,
+   method:get
+ })
+}
+getFunc()
+
+```
+
+#### 4. 减少函数的副作用
+
+减少函数的副作用并非总是需要以纯函数来解决所有问题,我们知道副作用会让函数的状态难以掌控,
+在过多的副作用下会让我们对期望值达到偏离。从而对函数进行重构。
+因此在编程中应当以较少的副作用函数为目标,使函数的预期与实际保持一致的同时不至于造成过多的影响,
+这或许会使在构思和声明时花费一些时间，但对上下文的代码块来说，是一件好事。
+
+你可能发现有些时候会不可避免的改变了某些外部状态，比如缓存某些值，为此你陷入了重构的苦思，事实是不必过于担忧
+,想做必合理。
+这就是 **编程中的取舍** 。学会在编程、架构、工程上有所取舍 (不是随心所欲) 后构建出的产品自然会嵌上独具一格的风采,这就属于你的编程。
+
+```js
+//bad
+let user = getUserInfo()
+const upload = () => {
+  user.name = `${user.name}-upload`
+  //fetch
+}
+
+//good
+const user = getUser()
+const upload = (user) => {
+  const body = `${user.name}-upload`
+  // fetch body ...
+}
+upload(user)
+```
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
