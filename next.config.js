@@ -11,6 +11,7 @@ const withMDX = require('@next/mdx')({
 const nextConfig = {
   target: 'serverless',
   generateEtags: true,
+  poweredByHeader: false,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'], //文件扩展
 }
 

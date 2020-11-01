@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": " npm run collect && next dev ",
-    "build": "npm run build && next build ",
+    "build": "next build ",
     "export-build": "npm run collect && next build",
     "post": "node scripts/create.js",
     "start": " npm run collect && next start ",
