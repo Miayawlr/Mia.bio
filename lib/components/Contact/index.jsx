@@ -4,10 +4,10 @@ import StyledContact, { Socials } from './style'
 import { useTheme, Spacer, Link, Divider } from '@geist-ui/react'
 import BLOG from '../../../blog.config'
 import useConfigs from '../../utils/config-context'
+const linkProps = {
+  target: '_blank',
+}
 function Contact({ children, ...rest }) {
-  const linkProps = {
-    target: '_blank',
-  }
   return (
     <StyledContact {...rest}>
       <Divider y={0.5} />
@@ -35,7 +35,36 @@ function Contact({ children, ...rest }) {
         </Socials>
         <Spacer x={5} />
       </div>
+      <IcpContainer />
     </StyledContact>
+  )
+}
+
+const IcpContainer = () => {
+  return (
+    <div>
+      <Spacer y={1} />
+      {/* <span> */}
+      <Socials>
+        <Link
+          aria-label={'icp'}
+          href={'http://beian.miit.gov.cn'}
+          {...linkProps}
+        >
+          闽ICP备2020020368号-1
+        </Link>
+      </Socials>
+
+      {/* <style jsx>{`
+        display: flex;
+        justify-content: center;
+        a:hover {
+          color: #0070f3 !important;
+          text-decoration: underline dashed !important;
+          transition: all 150ms ease;
+        }
+      `}</style> */}
+    </div>
   )
 }
 

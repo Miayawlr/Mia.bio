@@ -7,7 +7,7 @@
     "build": "next build ",
     "export-build": "npm run collect && next build",
     "post": "node scripts/create.js",
-    "start": " npm run collect && next start ",
+    "start": " npm run collect && next start -p 80",
     "export":"npm run export-build && next export",
     "collect": "node scripts/collect-meta.js"
   },
