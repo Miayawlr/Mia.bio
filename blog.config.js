@@ -1,5 +1,5 @@
 const BLOG = {
-  author: 'Mia',
+  author: '楽',
   title: 'mia.bio',
   introduce: "Hi,I'm Mia.一个前端萌新",
   summary: '前端萌新,喜好音乐/偶尔恰二刺螈',
