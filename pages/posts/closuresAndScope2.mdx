@@ -1,0 +1,89 @@
+import Layout from 'lib/components/layout'
+import { Spacer, Link, Dot } from '@geist-ui/react'
+
+export const meta = {
+  title: 'javaScript作用域与闭包的前世今生2',
+  date: '2020-12-01T14:56:08.783Z',
+  description: '',
+}
+
+接上文,在<Link href="/posts/closuresAndScope" color>javaScript 作用域与闭包的前世今生 1</Link>中,
+我们学习了 AO/GO 以及 scope chain 的概念。这里我将
+带你揭开闭包的最后一层面纱,带你理解什么是闭包,以及闭包的用处。
+
+#### 1.什么是闭包
+
+首先有一段代码块如下
+
+```js
+const func = () => {
+  let a = 0
+  const counter = () => (a = a + 1)
+  return counter
+}
+const getA = func()
+console.log(getA())
+...//to many console
+console.log(getA())
+```
+
+上面这段代码块就是一段经典的闭包,回想上一章中的`chain scope`知识内容,
+我们通过`chain scope`将`counter` 返回到全局 GO 中并且保持了引用。
+这里我将引用*你不知道的 JavaScript1*中一段对闭包思维经典描述。
+
+<div style={{ fontSize: '13px', lineHeight: '26px', fontStyle: 'italic' }}>
+  <Dot style={{ marginRight: '5px' }} type="success" />
+  闭包并不是一个需要学习新的语法或模式 才能使用的工具， 它也不是一件必须接受像 Luke2
+  一样的原力训练才能使用和掌握的武器。 闭包是基于词法作用域书写代码时所产生的自然结果，
+  你甚至不需要为了利用它们而有意 识地创建闭包。 闭包的创建和使用在你的代码中随处可见。
+  你缺少的是根据你自己的意愿 来识别、 拥抱和影响闭包的思维环境。
+</div>
+
+这里我将插入一段闭包的概念:_当函数可以记住并访问所在的词法作用域时， 就产生了闭包，即使函数是在当前词法作用
+域之外执行。_
+通过这个概念以及对上一篇文章 AO/GO 的理解我们可以清楚的认知到`counter`函数里面的 a 引用的是`func`里面的 a 同时`counter`引用着`func`的 AO,
+并且 return 出去的`counter`当我们调用的时候实际上我们已经在 GO 的环境中间接的引用了`func`中 AO 定义的一切。这就是闭包,
+直到最后你才恍然大悟： 原来在我的代码中已经到处都是闭包了。这里我将趁热打铁带你在了解闭包的一些妙用。
+
+#### 2.闭包的妙用
+
+`JavaScript`中我们可以使用闭包模拟私有方法,私有方法不仅仅有利于限制对代码的访问,避免非核心的方法弄乱了代码的公共接口部分。
+下面我将举例一段代码片段带你了解它的具体使用。
+
+```js
+//counter
+
+const numCounter = () => {
+  let initCount = 0
+  const increment = (target) => (initCount += target)
+  const decrement = (target) => (initCount -= target)
+  const value = () => initCount
+  return { increment, decrement, value }
+}
+
+const counter1 = numCounter()
+const counter2 = numCounter()
+counter1.increment(1)
+counter1.increment(1)
+console.log(counter1.value()) //---->2
+console.log(counter2.value()) //---->0
+```
+
+<div>
+  <Dot style={{ marginRight: '5px' }} type="error" />
+  请注意上面这段代码片段中的 counter1 和 counter2 是如何维护它们各自的独立性的。每个闭包都是引用自己词法作用域内的变量
+  initCount。
+</div>
+
+<Spacer y={1} />
+
+<div>
+  <Dot style={{ marginRight: '5px' }} type="error" />
+  每次调用其中一个计数器时，通过改变这个变量的值，会改变这个闭包的词法环境。然而在一个闭包内对变量的修改，不会影响到另外一个闭包中的变量。
+</div>
+
+如果你可以通过上文理解闭包,那么我相信其实你已经置身于闭包的环境之中了,我所做的无非是剥下了闭包的外衣带你理解他的流程。具体的细节还需你自己思考构建自己的体系。
+
+<Spacer y={3} />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
