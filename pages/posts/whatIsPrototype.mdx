@@ -1,0 +1,207 @@
+import Layout from 'lib/components/layout'
+import { Spacer, Link, Dot, Description, Code } from '@geist-ui/react'
+
+export const meta = {
+  title: 'javaScript中的原型链',
+  date: '2020-12-05T09:21:05.499Z',
+  description: '',
+}
+
+在学习`JavaScript`的时候,通常令我们感到困惑的有闭包,原型链。他们作为`JavaScript`的基石,决定了我们上限的高度。
+它的本质是 `JavaScript` 开发的理论基础和技术提升的踏板。在此我想通过我的理解帮助同学们跨过这座大山。
+
+在学习`JavaScript`原型链之前。我想带同学们了解下什么是构造函数。
+
+#### 1. 通过现象看本质
+
+现有一块代码段如下
+
+```js
+function Test(name, age) {
+  this.name = name
+  this.age = age
+}
+Test.prototype.getName = function () {
+  console.log(this.name)
+}
+
+const test = new Test('miaya', 18)
+test.getName()
+```
+
+- 思考与分析
+  <div>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="error" />
+      在实例化之前其中的this指向了谁?
+    </p>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="warning" />
+      new这个关键字做了什么?
+    </p>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="success" />
+      prototype到底是什么?
+    </p>
+  </div>
+
+带着上述的疑问我将带同学们一起思考其中的问题。代码块如下
+
+```js
+//  在实例化之前其中的this指向了谁
+function Test() {
+  this.name = name
+  this.age = age
+  console.log(this) // window。
+  //实例化以后 打印 Test {name :'miaya',18 }
+}
+Test()
+```
+
+<Description
+  title="探究this指向了谁"
+  content={
+    <>
+      <div
+        style={{
+          fontSize: '1.2em',
+          fontWeight: 'normal',
+          lineHeight: '1.525em',
+        }}
+      >
+        通过上述的打印我们可以清楚的看到Test构造函数在实例化之前
+        this指向的是window。 那么我们在实例化之后呢?
+        <Code> const test = new Test('miaya', 18)</Code>
+        为什么在new 之后this就改变了指向呢?其实是因为构造函数会隐式
+        的返回一个this。 例如下面的这一段伪代码。
+      </div>
+    </>
+  }
+/>
+
+```js
+function Test() {
+  var this = {
+    this.name : name
+    this.age : age
+  }
+  return this
+}
+```
+
+我们通过 return this 将 this 返回给了实例。因此,我们定义的 test 接收到的这个
+this 实例实际上就是 test 本身。这里有的同学可能会疑惑了,你说 rerun this 那就是 return this 吗?
+这里我将再列举一段代码。通过结果在看本质。
+
+```js
+function Return(name) {
+  this.name = name
+  console.log(this) // Return {name :'miaya'}
+  return {}
+}
+
+const ret = new Return('miaya')
+console.log(ret) //{}
+```
+
+我们可以看到打印的 ret 并未我们想得到的 name 值。这里我们同时在 retrun 前打印 this。
+我们可以清楚的看到 this 还是指向到了这个实例。但是我们 retrun 了一个空对象,
+让一切都不符合了预期。
+这里同学们就该相信实际上我们这个构造函数他就是隐式的 return 了一个 this。
+这里也将补充一个其他的知识点。普通函数默认 return 的是 undefined。
+通过上面的学习,我们知道了 new 的作用实际上就是把这个 this 挂载给了实例本身。
+
+<Description
+  title="prototype 是个啥"
+  content={
+    <>
+      <div
+        style={{
+          fontSize: '1.2em',
+          fontWeight: 'normal',
+          lineHeight: '1.525em',
+        }}
+      >
+        我们可以打印下 Test 构造函数的 prototype
+        <Code> console.log(test)</Code>
+        <br />
+        <Code>console.log(Test.prototype)</Code>
+        <br />
+        通过打印我们可以得到分别一个实例产物和 constructor。 同学们可以打开这个实例我们可以清楚的看到一个名为__proto__的属性。同时里面也包含了我们的打印的
+        constructor 和挂载的方法。 这里我将借助对象的概念通过一段伪代码帮助同学们理解
+        prototype 干了些什么。
+      </div>
+    </>
+  }
+/>
+
+- 接上文
+
+```js
+function Test() {
+  var this = {
+    this.name : name
+    this.age : age
+    __proto__ :{
+      getName,
+      constructor
+    }
+  }
+  return this
+}
+
+Test.prototype.getName = function () {
+  console.log(this.name)
+}
+
+const test = new Test('miaya', 18)
+console.log(test)
+console.log(Test.prototype)
+```
+
+如上文的伪代码块。我们可以把`__proto__`理解为我们 return 出去的 this 的一个键名。
+我们通过 prototype 就是往这个键里面添加属性。
+因此我们打印出来的结果分别对应了我们的猜想。同学们不必把`__proto__`想象的有多复杂。
+纵观太多的博客博文都是故弄玄虚的把这么一个属性神话到一个让我们无法理解他究竟是什么。
+其实他很简单,只需要把他理解成一个系统内置的属性键名就好了。至于为什么要用`__proto__`呢。
+也许他的本意是想让我们不去调用他吧。
+
+#### 2.有点简单的多人关系。
+
+通过上面的小试牛刀。我想各位同学已经对构造函数有了初步了理解。那么我将成热打铁,带你窥探原型链其中的关系。
+有一段代码段如下
+
+```js
+function Grasp() {
+  this.name = 'Grasp'
+}
+Grasp.prototype.grasp = function () {
+  console.log('grasp prototype')
+}
+
+function Learn() {
+  this.name = 'Learn'
+}
+Learn.prototype.learn = function () {
+  console.log('learn prototype')
+}
+
+function Test(name) {
+  this.name = name
+}
+
+let grasp = new Grasp()
+let learn = new Learn()
+
+Learn.prototype = grasp
+Test.prototype = learn
+let test = new Test('miaya')
+console.log(test)
+```
+
+通过打印 test 我们可以清晰的看到其中`__proto__`的结构。无一例外指向到了 Grasp 的实例。
+同时也继承了上面的属性和方法。
+
+<Spacer y={3} />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
