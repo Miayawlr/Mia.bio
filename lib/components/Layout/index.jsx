@@ -52,11 +52,15 @@ function Layout({ meta = {}, children, ...rest }) {
         {renderPage && <Title date={meta.date} title={meta.title} />}
         {children}
         <Spacer y={4} />
+        <div className={'spacer-may'}></div>
         <Contact />
       </LayoutContainer>
       <style jsx>{`
         .themeIcons {
           margin-left: auto;
+        }
+        .spacer-may {
+          margin-top: 1.3rem;
         }
       `}</style>
     </StyledLayout>

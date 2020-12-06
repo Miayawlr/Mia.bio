@@ -10,8 +10,13 @@ const withMDX = require('@next/mdx')({
 
 const nextConfig = {
   target: 'serverless',
-  generateEtags: true,
+  cssModules: true,
+  generateEtags: false,
   poweredByHeader: false,
+  cssLoaderOptions: {
+    importLoaders: 1,
+    localIdentName: '[local]___[hash:base64:5]',
+  },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'], //文件扩展
 }
 

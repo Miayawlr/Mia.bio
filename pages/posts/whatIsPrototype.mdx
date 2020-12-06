@@ -181,6 +181,7 @@ Grasp.prototype.grasp = function () {
 
 function Learn() {
   this.name = 'Learn'
+  this.counter = 100
 }
 Learn.prototype.learn = function () {
   console.log('learn prototype')
@@ -194,13 +195,201 @@ let grasp = new Grasp()
 let learn = new Learn()
 
 Learn.prototype = grasp
+Learn.prototype = Grasp.prototype
 Test.prototype = learn
+Test.prototype = Learn.prototype
 let test = new Test('miaya')
 console.log(test)
 ```
 
 通过打印 test 我们可以清晰的看到其中`__proto__`的结构。无一例外指向到了 Grasp 的实例。
-同时也继承了上面的属性和方法。
+同时也继承了上面的属性和方法。但是我们得思考一下这么做真的好吗?
+
+- 思考与分析
+  <div>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="error" />
+      可否通过实例修改继承的属性和方法?
+    </p>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="warning" />
+      怎么用更优雅的方式实现继承?
+    </p>
+  </div>
+
+带着上述的问题我将带着同学们一起思考,代码块如下
+
+```js
+ 首先我们往构造函数Learn 里面添加一段代码
+ function Learn(){
+   this.obj={
+     js:'1',
+   }
+ }
+ test.obj.ts='2'
+ test.counter++
+console.log(learn)
+console.log(test)
+```
+
+<Description
+  title="有点奇怪的修改"
+  content={
+    <>
+      <div
+        style={{
+          fontSize: '1.2em',
+          fontWeight: 'normal',
+          lineHeight: '1.525em',
+        }}
+      >
+        通过上述的打印我们可以看到一个现象。实例test中保存了counter 101,
+        实例learn中保存了counter 100。同时实例learn中obj的属性被添加了。
+        通过打印我们可以看到obj被保存到test实例的__proto__里面。而counter被保存到了自身实例里。
+        方法的修改这里就不做演示 。
+        因此我们可以得到一个结论我们可以通过实例去修改继承的属性和方法。
+        但是如果我们修改的是一个引用类型那么他只会保存到__proto__里面而不是在这个实例上(也就是
+        <s>this</s>),对此我们产生了思考能否用一种优雅的方式实现继承呢。
+      </div>
+    </>
+  }
+/>
+<Spacer y={1} />
+<Description
+  title="优雅的继承"
+  content={
+    <>
+      <div
+        style={{
+          fontSize: '1.2em',
+          fontWeight: 'normal',
+          lineHeight: '1.525em',
+        }}
+      >
+        面对上面的困扰我们能否使用一种优雅的方式去实现呢?
+        这里我将列举2种方式进行演示,为各位同学们选择合理的方式去实现如何优雅的继承。
+      </div>
+    </>
+  }
+/>
+
+```js
+// 组合继承
+function Grasp() {
+  this.graspNmae = 'grasp'
+}
+Grasp.prototype.grasp = function () {
+  console.log('grasp prototype')
+}
+function Learn() {
+  this.learnName = 'learn'
+  Grasp.call(this)
+}
+Learn.prototype.constructor = Grasp
+Learn.prototype = new Grasp()
+function Test {
+  Learn.call(this)
+}
+Test.prototype = new Learn()
+Test.prototype.constructor =Test
+let test = new Test()
+console.log(test)
+```
+
+通过打印我们可以清楚的看到我们调用了父类的构造函数。同时生成了多份实例,这显然是对性能的浪费。
+这里有的同学可能不懂为什么要把 constructor 指向自身。这其实是一种习惯。并无其他用处。
+这里的 <Code>Test/Learn 的 prototype=new Grasp()/new Learn()</Code>其实相当于
+我门把这个实例挂载到了对应的`__proto__`上。对应的`call`相当于把 this 的指向改变到当前的实例上。
+因此我们得到了一份同样的实例。但是由于我们通过`call`方式我们无法实现使用`prototype`的方法和属性,因此
+我们就需要把`prototype`也一并挂载。
+
+<p>
+  <Dot style={{ marginRight: '5px' }} type="success" />
+  能否更优雅?
+</p>
+为了解决组合继承带来的性能浪费,因此就诞生了组合寄生式继承。
+
+```js
+function Father(age) {
+  this.age = age
+}
+Father.prototype.getAge = function () {
+  console.log(this.age)
+}
+function Children(age, name) {
+  Father.call(this, age, name)
+  this.name = name
+}
+function Buffer() {}
+Buffer.prototype = Father.prototype
+Children.prototype = new Buffer()
+Children.prototype.constructor = Children
+Children.prototype.super_class = Father.name //可以清楚的知道继承了谁
+let children = new Children('18', 'miaya')
+Children.prototype.getName = function () {
+  console.log(this.name)
+}
+console.log(children)
+children.getName()
+children.getAge()
+```
+
+通过上面的代码段我们优雅的继承了父类的一切同时通过打印 children 发现并没有性能的浪费。
+
+- 逐步分析
+  <div>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="error" />
+      构造函数Buffer的用处是什么?
+    </p>
+    <p>
+      <Dot style={{ marginRight: '5px' }} type="warning" />
+      为什么要这么写?
+    </p>
+  </div>
+
+<Description
+  title="优雅的缓冲区"
+  content={
+    <>
+      <div
+        style={{
+          fontSize: '1.2em',
+          fontWeight: 'normal',
+          lineHeight: '1.525em',
+        }}
+      >
+        通过前面的知识我们可以得知,在构造函数Children中我们通过call/apply改变了实例this的指向。
+        因此这个实例指向到了chilren。让我们可以优雅的实例化一切。Buffer作为一个缓冲区,我们使用Buffer的
+        prototype 接收 父类的prototype 相当于如下所示。
+      </div>
+    </>
+  }
+/>
+
+```js
+function Buffer() {
+  var this = {
+    __proto__: Father.__proto__,
+  }
+  return this
+}
+```
+
+`Children.prototype` 挂载了 Buffer 的实例就相当于
+
+```js
+function Children() {
+  var this = {
+    __proto__: new Buffer(),
+  }
+  return this
+}
+这里的这个Buffer指的是Buffer这个实例。
+```
+
+因此我们通过之前的知识可以得知,即使我们往 Children 的 `prototype`追加方法或者属性
+,他终将挂载在我们的缓冲区中并未对我们的父类造成影响,这就实现了我们优雅的继承。
 
 <Spacer y={3} />
 
