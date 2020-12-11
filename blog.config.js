@@ -1,8 +1,8 @@
 const BLOG = {
   author: '楽',
-  title: 'mia.bio',
-  introduce: "Hi,I'm Mia.一个前端萌新",
-  summary: '前端萌新,喜好音乐/偶尔恰二刺螈',
+  title: '楽-どなんた関係ても、全部終わる',
+  introduce: '我是楽.一个前端萌新',
+  summary: '一个无名的前端萌新',
   language: 'zh-cn',
   email: '812137533@qq.com',
   github: 'https://github.com/Miayawlr',
