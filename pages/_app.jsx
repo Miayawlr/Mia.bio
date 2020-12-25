@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>{BLOG.title}</title>
         <meta name="author" content={BLOG.author} />
-
+        <meta name="baidu-site-verification" content="code-QUoF4ueHY1" />
         <meta
           name="viewport"
           content="initial-scale=1, maximum-scale=5, minimum-scale=1, viewport-fit=cover"
