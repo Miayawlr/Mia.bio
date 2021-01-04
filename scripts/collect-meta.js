@@ -13,11 +13,13 @@ const getMetaData = async (files, parent_path) => {
         if (isDir) {
           const children = await fs.readdir(filePath)
           const childrenMetaData = await getMetaData(children, filePath)
+
+          // console.log(childrenMetaData)
           return { name: file, children: childrenMetaData }
         }
         const content = await fs.readFile(filePath, 'utf-8')
         const meta = await extractMdxdata(content)
-        console.log(meta)
+        // console.log(meta)
         // console.log(content)
         const url = filePath.replace(pagePath, '').replace('.mdx', '')
         return { name: meta.title || file, url, meta }
