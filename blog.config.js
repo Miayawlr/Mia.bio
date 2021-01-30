@@ -5,7 +5,7 @@ const BLOG = {
   summary: '一个无名的前端萌新',
   language: 'zh-cn',
   email: '812137533@qq.com',
-  github: 'https://github.com/Miayawlr',
+  github: 'https://github.com/XeryYue',
   bio: '/',
   labels: {
     default: '所有文章',
