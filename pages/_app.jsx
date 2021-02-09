@@ -14,6 +14,32 @@ function MyApp({ Component, pageProps }) {
     setThemeType(next)
   }, [])
   useEffect(() => {
+    ;(() => {
+      if (
+        typeof WeixinJSBridge == 'object' &&
+        typeof WeixinJSBridge.invoke == 'function'
+      ) {
+        handleFontSize()
+        return
+      }
+      if (document.addEventListener) {
+        document.addEventListener('WeixinJSBridgeReady', handleFontSize, false)
+        return
+      }
+      if (document.attachEvent) {
+        document.attachEvent('WeixinJSBridgeReady', handleFontSize)
+        document.attachEvent('onWeixinJSBridgeReady', handleFontSize)
+        return
+      }
+      function handleFontSize() {
+        WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
+        WeixinJSBridge.on('menu:setfont', function () {
+          WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
+        })
+      }
+    })()
+  }, [])
+  useEffect(() => {
     if (typeof localStorage !== 'object') return null
     const themeType = localStorage.getItem('theme')
     setThemeType(themeType === 'dark' ? 'dark' : 'light')
@@ -44,6 +70,9 @@ function MyApp({ Component, pageProps }) {
             html {
               font-size: 15px;
             }
+          }
+          body {
+            -webkit-text-size-adjust: 100% !important;
           }
         `}</style>
       </GeistProvider>
