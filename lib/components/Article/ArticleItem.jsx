@@ -14,7 +14,7 @@ const getDateString = (date) => {
   if (`${d}` === 'Invalid Date') return ''
   return new Date(date)
     .toLocaleString('zh-cn', options)
-    .replace('日', '日, &nbsp;')
+    .replace('日', '日&nbsp;&nbsp; ')
 }
 
 function ArticleItem({ data = {} }) {
