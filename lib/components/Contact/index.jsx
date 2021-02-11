@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import StyledContact, { Socials } from './style'
-import { useTheme, Spacer, Link, Divider } from '@geist-ui/react'
+import { Spacer, Link, Divider } from '@geist-ui/react'
 import BLOG from '../../../blog.config'
-import useConfigs from '../../utils/config-context'
 const linkProps = {
   target: '_blank',
 }
@@ -41,29 +40,25 @@ function Contact({ children, ...rest }) {
 }
 
 const IcpContainer = () => {
+  const flag = BLOG.record
+  console.log(flag)
   return (
     <div>
-      <Spacer y={1} />
-      {/* <span> */}
-      <Socials>
-        <Link
-          aria-label={'icp'}
-          href={'http://beian.miit.gov.cn'}
-          {...linkProps}
-        >
-          闽ICP备2020020368号-1
-        </Link>
-      </Socials>
-
-      {/* <style jsx>{`
-        display: flex;
-        justify-content: center;
-        a:hover {
-          color: #0070f3 !important;
-          text-decoration: underline dashed !important;
-          transition: all 150ms ease;
-        }
-      `}</style> */}
+      {flag && (
+        <>
+          <Spacer y={1} />
+          <Socials>
+            <Link aria-label={'icp'} href={BLOG.recordInfo.gov} {...linkProps}>
+              {BLOG.recordInfo.note}
+            </Link>
+          </Socials>
+        </>
+      )}
+      {!flag && (
+        <>
+          <Spacer y={1} />
+        </>
+      )}
     </div>
   )
 }

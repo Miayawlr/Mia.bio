@@ -21,7 +21,6 @@ const AfterLinks = ({ data }) => {
 
 function ProfileLinks({ children, ...rest }) {
   const links = useMemo(() => MenuList(metaData), [])
-  // console.log(links)
   return (
     <StyledProfileLinks {...rest}>
       <AfterLinks data={{ url: '/', name: BLOG.labels.default }} />

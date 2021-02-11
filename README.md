@@ -1,30 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### mia.bio
 
-## Getting Started
+> 静态博客模板
 
-First, run the development server:
+<br />
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+#### 如何安装
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+运行 `npm init mia-bio` 或`npx create-mia-bio`或`yarn create-mia-bio`即可初始化你的博客。
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+<br />
 
-## Learn More
+### 如何写作
 
-To learn more about Next.js, take a look at the following resources:
+nodejs 的版本>=10
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 在项目中,运行`npm i`或`yarn install`安装依赖。
+- `npm run post`或`yarn post` 创建文章。
+- `npm run dev`或`yarn dev` 开启本地调试模式。
+- `npm run build`或者`yarn build`打包项目。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<br />
 
-## Deploy on Vercel
+### 特色
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+采用 [Geist UI](https://react.geist-ui.dev/)进行构建的静态博客。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- 完善的服务端渲染以及 SEO 支持。
+- 使用者只需要专注于写作。
+
+<br />
+
+#### tips.
+
+- 不要随意删除本项目的任意目录,二次开发需要自行阅读相关代码。
+- 本项目遵循 MIT 协议。
+
+[MIT](./LICENSE)

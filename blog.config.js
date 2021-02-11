@@ -1,21 +1,21 @@
 const BLOG = {
-  author: '楽',
-  title: '楽-どなんた関係ても、全部終わる',
-  introduce: '我是楽.一个前端萌新',
-  summary: '一个无名的前端萌新',
+  author: 'template',
+  title: 'template',
+  introduce: 'template',
+  summary: 'template',
   language: 'zh-cn',
-  email: '812137533@qq.com',
-  github: 'https://github.com/XeryYue',
+  email: 'template',
+  github: 'template',
   bio: '/',
+  record: true,
+  recordInfo: {
+    gov: 'http://beian.miit.gov.cn',
+    note: 'test data',
+  },
   labels: {
     default: '所有文章',
     aboveMe: '关于我',
     last: '最近',
-  },
-  labelsPath: {
-    default: '/blog',
-    aboveMe: '/above',
-    last: '/last',
   },
   layouts: {
     pageWidth: '750px',

@@ -22,24 +22,7 @@ function LayoutHeader({ meta }) {
 }
 
 function Layout({ meta = {}, children, ...rest }) {
-  // const [isRender, setIsRender] = useState(false)
   const renderPage = useMemo(() => meta && meta.title, [])
-  // useEffect(() => {
-  //   setIsRender(true)
-  // }, [])
-  // if (!isRender) {
-  //   return (
-  //     <div className={'article-content'}>
-  //       <LayoutHeader meta={meta} />
-  //       <style jsx>{`
-  //         .article-content {
-  //           opacity: 0;
-  //           display: none;
-  //         }
-  //       `}</style>
-  //     </div>
-  //   )
-  // }
   return (
     <StyledLayout {...rest}>
       <LayoutHeader meta={meta} />
