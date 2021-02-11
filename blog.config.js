@@ -7,15 +7,15 @@ const BLOG = {
   email: '812137533@qq.com',
   github: 'https://github.com/XeryYue',
   bio: '/',
+  record: true,
+  recordInfo: {
+    gov: 'http://beian.miit.gov.cn',
+    note: '闽ICP备2020020368号-1',
+  },
   labels: {
     default: '所有文章',
     aboveMe: '关于我',
     last: '最近',
-  },
-  labelsPath: {
-    default: '/blog',
-    aboveMe: '/above',
-    last: '/last',
   },
   layouts: {
     pageWidth: '750px',
