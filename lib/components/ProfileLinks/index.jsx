@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import StyledProfileLinks from './style'
 import NextLink from 'next/link'
@@ -6,8 +6,7 @@ import { Link } from '@geist-ui/react'
 import BLOG from '../../../blog.config'
 import metaData from 'lib/data/metaData.json'
 const MenuList = (metaData) => {
-  console.log(metaData)
-  const data = metaData.find((item) => item.name === 'aboveMe')
+  const data = metaData.find((item) => item.name !== 'posts')
   return (data || {}).children || []
 }
 
