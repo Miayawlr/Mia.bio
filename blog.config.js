@@ -1,7 +1,6 @@
 const BLOG = {
   author: 'template',
   title: 'template',
-  introduce: 'template',
   summary: 'template',
   language: 'zh-cn',
   email: 'template',

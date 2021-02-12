@@ -17,6 +17,9 @@ function LayoutHeader({ meta }) {
           {meta.title}-{BLOG.title}
         </title>
       )}
+      {meta.description && (
+        <meta name="description" content={meta.description} />
+      )}
     </Head>
   )
 }
