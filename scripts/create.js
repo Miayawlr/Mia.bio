@@ -4,14 +4,21 @@ const chalk = require('chalk')
 const prompt = require('prompt-sync')()
 // 写入模块文件
 const postsPath = path.join(__dirname, '../pages/posts')
+console.log(postsPath)
 // 模板路径
 const templatePath = path.join(__dirname, 'template.mdx')
 
 const create = async () => {
   const hasPosts = await fs.pathExists(postsPath)
   if (!hasPosts) {
-    console.log(chalk.red("Aborted. Can't found  dir 'page/posts'.\n"))
-    process.exit(1)
+    // console.log(chalk.red("Aborted. Can't found  dir 'page/posts'.\n"))
+    // process.exit(1)
+    console.log(
+      chalk.green(
+        "Cant't found dir 'page/posts'. Will be created 'page/posts'.\n"
+      )
+    )
+    fs.mkdir(postsPath)
   }
 
   const tips = `> You need named the post ${chalk.blue(
