@@ -7,8 +7,6 @@ import BLOG from '../../../blog.config.js'
 import ProfileLinks from '../ProfileLinks'
 import { ThemeProvider } from 'styled-components'
 function Profile({ children, ...rest }) {
-  // const theme = useTheme()
-  // console.log(theme)
   return (
     <StyledProfile {...rest}>
       {children}
@@ -19,7 +17,6 @@ function Profile({ children, ...rest }) {
             <User src={'/assets/ava.jpg'} name={BLOG.author} altText="avatar">
               {BLOG.summary}
             </User>
-            {/* <User.Link href="https://github.com/Miayawlr">@wlr_kanno</User.Link> */}
           </Link>
         </NextLink>
       </RowUser>

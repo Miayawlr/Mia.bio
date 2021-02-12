@@ -17,29 +17,15 @@ function LayoutHeader({ meta }) {
           {meta.title}-{BLOG.title}
         </title>
       )}
+      {meta.description && (
+        <meta name="description" content={meta.description} />
+      )}
     </Head>
   )
 }
 
 function Layout({ meta = {}, children, ...rest }) {
-  // const [isRender, setIsRender] = useState(false)
   const renderPage = useMemo(() => meta && meta.title, [])
-  // useEffect(() => {
-  //   setIsRender(true)
-  // }, [])
-  // if (!isRender) {
-  //   return (
-  //     <div className={'article-content'}>
-  //       <LayoutHeader meta={meta} />
-  //       <style jsx>{`
-  //         .article-content {
-  //           opacity: 0;
-  //           display: none;
-  //         }
-  //       `}</style>
-  //     </div>
-  //   )
-  // }
   return (
     <StyledLayout {...rest}>
       <LayoutHeader meta={meta} />

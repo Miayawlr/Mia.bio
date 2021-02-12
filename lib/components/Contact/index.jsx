@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import StyledContact, { Socials } from './style'
-import { useTheme, Spacer, Link, Divider } from '@geist-ui/react'
+import { Spacer, Link, Divider } from '@geist-ui/react'
 import BLOG from '../../../blog.config'
-import useConfigs from '../../utils/config-context'
 const linkProps = {
   target: '_blank',
 }
