@@ -36,7 +36,7 @@ export default class MyDocument extends Document {
         <Head>
           <title>mia.bio</title>
         </Head>
-        <body>
+        <body className={'line-numbers'}>
           <Main />
           <NextScript />
         </body>

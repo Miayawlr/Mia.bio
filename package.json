@@ -8,7 +8,7 @@
     "export-build": "npm run collect && next build",
     "post": "node scripts/create.js",
     "start": " npm run collect && next start",
-    "export":"npm run export-build && next export",
+    "export": "npm run export-build && next export",
     "collect": "node scripts/collect-meta.js"
   },
   "dependencies": {
@@ -19,11 +19,13 @@
     "@mdx-js/loader": "^1.6.18",
     "@next/mdx": "^9.5.5",
     "add": "^2.0.6",
+    "babel-plugin-prismjs": "^2.0.1",
     "babel-plugin-styled-components": "^1.11.1",
     "extract-mdx-metadata": "^1.0.0",
     "fs-extra": "^9.0.1",
     "next": "9.5.5",
     "prism-react-renderer": "^1.1.1",
+    "prismjs": "^1.23.0",
     "prompt-sync": "^4.2.0",
     "prompt-sync-history": "^1.0.1",
     "react": "16.13.1",
