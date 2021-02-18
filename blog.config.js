@@ -14,8 +14,6 @@ const BLOG = {
   },
   labels: {
     default: '所有文章',
-    aboveMe: '关于我',
-    last: '最近',
   },
   layouts: {
     pageWidth: '750px',
