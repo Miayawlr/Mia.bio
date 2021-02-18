@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Profile from '../Profile'
 import { Spacer } from '@geist-ui/react'
+import Prism from 'prismjs'
 import StyledLayout, { LayoutContainer } from './style'
 import ThemeIcon from '../ThemeIcon'
 import Contact from '../Contact'
@@ -25,6 +26,9 @@ function LayoutHeader({ meta }) {
 }
 
 function Layout({ meta = {}, children, ...rest }) {
+  useEffect(() => {
+    Prism.highlightAll()
+  }, [])
   const renderPage = useMemo(() => meta && meta.title, [])
   return (
     <StyledLayout {...rest}>

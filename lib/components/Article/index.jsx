@@ -12,7 +12,7 @@ function getAllPage(data) {
 
 function Article({ title = '所有', children, ...rest }) {
   const posts = useMemo(() => getAllPage(metaData), [])
-  // console.log(posts)
+  console.log(posts)
   return (
     <StyledArticle {...rest}>
       <h2>{title}</h2>
