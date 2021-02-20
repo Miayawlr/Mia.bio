@@ -4,14 +4,16 @@ import { Activity } from '@geist-ui/react-icons'
 import StyledTitle, { DateContent } from './style'
 import { useTheme } from '@geist-ui/react'
 import { useRouter } from 'next/router'
+import { timeConver } from '../../utils/date-conversion'
 function DateContainer({ date }) {
   const theme = useTheme()
   const { asPath } = useRouter()
-  console.log(date)
+  // console.log(asPath)
   const d = useMemo(() => new Date(date), [])
-  console.log(d)
+  const time = timeConver(d)
   if (`${d}` === 'Invalid Date') return null
-  const time = Date.now() - d.getTime()
+  // const time = Date.now() - d.getTime()
+  // console.log(time)
   return (
     <DateContent>
       <span className={'dot'}>
@@ -19,6 +21,7 @@ function DateContainer({ date }) {
       </span>
       {d.toLocaleString('zh-cn').replace(/\//g, '-')}
       <span className="split"> / </span>
+      {time}
     </DateContent>
   )
 }
