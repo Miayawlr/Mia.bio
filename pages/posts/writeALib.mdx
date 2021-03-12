@@ -1,0 +1,19 @@
+import Layout from 'lib/components/layout'
+import {} from '@geist-ui/react'
+
+export const meta = {
+  title: '构建一个UI库的思考',
+  date: '2021-03-12T15:33:32.736Z',
+  description: '',
+}
+
+在学习*Vue3*的时候,我曾经一度拿他和 `react hooks` 作为对比,最终觉得如果只是看看写写 todolist 的程度,并不能掌握*Vue3*,于是萌发了写一个`UI Lib`的想法,
+在原型选择上,我并未花太多的时间,因为我觉得`GEIST UI`完全能满足我的需求,于是去看了下`Vercel's design`的设计,虽然`GEIST`已有*Vue2*的版本,
+但是我选择自己去实现个 3 的版本以供自己以后使用。
+
+在开发环境的配置上我选择了灵活的`jsx + vue3`的搭配,我觉得这样方便灵活的构建 UI 库,相比传统 vue2 的`tempalte`模板更能发挥 js 灵活的特性。在迷迷糊糊的写完 10 几个组件的时候,
+我发现这时候这个项目其实只是刚刚开始。因为我想让这个项目更长远一点,于是出于对项目的负责我选择集成`jest`进行 UT 测试。显然这都只是开始，后续的就剩下环境集成文档输出。
+
+后续的话。等写完了这套 UI 在详谈重构文章吧。。。。就当上述的文章都是废话。
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
