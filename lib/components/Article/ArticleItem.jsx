@@ -1,20 +1,13 @@
 import React from 'react'
 import { ArticleItemContainer } from './style'
 import NextLink from 'next/link'
-import PropTypes from 'prop-types'
 import { Link } from '@geist-ui/react'
-const options = {
-  weekday: 'short',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-}
+import { dateString } from '../../utils/date-conversion'
 const getDateString = (date) => {
   const d = new Date(date)
   if (`${d}` === 'Invalid Date') return ''
-  return new Date(date)
-    .toLocaleString('zh-cn', options)
-    .replace('日', '日&nbsp;&nbsp; ')
+
+  return dateString(d)
 }
 
 function ArticleItem({ data = {} }) {
@@ -26,7 +19,9 @@ function ArticleItem({ data = {} }) {
           {data.name}
           <span
             className={'date'}
-            dangerouslySetInnerHTML={{ __html: getDateString(data.meta.date) }}
+            dangerouslySetInnerHTML={{
+              __html: getDateString(data.meta.date),
+            }}
           ></span>
         </Link>
       </NextLink>
