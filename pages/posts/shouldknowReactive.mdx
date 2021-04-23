@@ -1,0 +1,195 @@
+import Layout from 'lib/components/layout'
+import { Link, Code, Dot, Spacer, Description } from '@geist-ui/react'
+
+export const meta = {
+  title: '从0实现个mini的reactive',
+  date: '2021-04-23T10:58:24.645Z',
+  description: '',
+}
+
+本文将会以`reactive`的原理作为切入点,简单的实现一个 mini 版本的`reactive`。
+
+开篇阐述,vue3 的生态覆盖率以及逐步上来,各种源码讲解也数不胜数,本文只是笔者的个人理念,只节选核心部分进行实现,至于虚拟 DOM 补丁部分不在本文阐述范围。
+
+#### 1.工欲善其事,必先利其器
+
+**Vue3**是可以说是基于`proxy`进行实现的。它里面的一些方法 API 也是。那么我们再了解如何实现一个`reactive`的时候我们就得先了解什么
+是<Link color icon href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy" target="_blank"><Code>Proxy</Code></Link>
+
+```js
+const handler = {
+  get(obj, prop) {
+    return Reflect.get(obj, prop)
+  },
+  set(obj, prop, val) {
+    return Reflect.set(obj, prop, val)
+  },
+}
+
+const proxy = new Proxy({}, handler)
+
+proxy.a = 3
+
+console.log(proxy) // =>{a:3}
+```
+
+通过对文档的阅读,我们可以得知`proxy`是对对象的一个代理可以帮我做一些其他的操作。有了这个基础的认知我们就可以开始实现一个 mini 版本的`reactive`了。
+
+#### 2.道士下山
+
+在我们编写`reactive`之前我们先观察下**vue3**的`reactive`是怎么用的
+
+```js
+import { reactive } from 'vue'
+const t = reactive({
+  name: 'XeryYue',
+})
+
+console.log(t.name)
+```
+
+通过观察我们可以看到我们应该往这个函数里面注入一个对象并且是通过`Proxy`代理的。好了,从 0 开始的第一步先实现这个
+
+```js
+const createReactiveObj = (target) => {
+  const handler = {
+    get(tar, key) {
+      return Reflect.get(tar, key)
+    },
+    set(tar, key, val) {
+      return Reflect.set(tar, key, val)
+    },
+  }
+  const observer = new Proxy(target, handler)
+  return observer
+}
+
+const reactive = (target) => createReactiveObj(target)
+```
+
+这样我们就简单的实现了一个简易的`reactive`了。虽然他很简陋,但是已经有了基础的形状。细心的同学可能会发现,如果我们往`reactive`里面传入一个非对象会怎么样呢,
+这时我们继续观察得知传入非对象它会返回这个数据本身,那么为了代码的严谨性,我们需要做一层判断。
+
+```js
+const isObj = (target) => typeof target === 'object' && target !== null
+
+const createReactiveObj = (target) => {
+  if (!isObj(target)) return target
+  //....上面的重复逻辑
+}
+```
+
+#### 3.初露锋芒
+
+在我们拥有一个简陋的`reactive`的时候,我们欣喜若狂,似乎是实现了一个了不起的工程,可是当我们使用的时候却发现,他失灵了,没错他并没有如**vue3**那样可以做深层代理,尽管我们可以修改深层的数据,
+但是他并没有触发`setter`这时候的我们不免疑惑,**vue**是如何做到的呢?下文将实现我们所困惑的功能。
+
+<Description
+  title={
+    <Dot type="success">
+      <span style={{ fontSize: '0.8rem !important;' }}>1.拆分模块</span>
+    </Dot>
+  }
+  content="在编写代码的时候我始终遵循一个原则合理拆分模块,下文的代码块将按照我个人的习惯进行划分。"
+/>
+
+```js
+const mutableHandler = {
+  get(tar, key) {
+    return Reflect.get(tar, key)
+  },
+  set(tar, key, val) {
+    return Reflect.set(tar, key, val)
+  },
+}
+
+const createReactiveObj = (target) => {
+  if (!isObj(target)) return target
+  const observer = new Proxy(target, mutableHandler)
+  return observer
+}
+```
+
+在这里我们就初步的划分了我们的模块,这样的好处是我们可以独立各自维护模块,方面维护以及阅读。这里是我的个人经验,当然了你也按照你自己的想法来。
+
+<Description
+  title={
+    <Dot type="warning">
+      <span style={{ fontSize: '0.8rem !important;' }}>2.编写代理</span>
+    </Dot>
+  }
+  content="这部分将会继续分割mutableHandler使其更加健壮更好维护。"
+/>
+
+```js
+const createGetter = () => {
+  return function get(target, key, receiver) {
+    const res = Reflect.get(target, key, receiver)
+    return res
+  }
+}
+
+const createSetter = () => {
+  return function set(target, key, value, receiver) {
+    const res = Reflect.set(target, key, value, receiver)
+    return res
+  }
+}
+
+const get = createGetter()
+const set = createSetter()
+
+const mutableHandler = {
+  set,
+  get,
+}
+```
+
+这一部分,我们已经将代码的模块划分明了,这时候我们只需要关心`createGetter`和`createSetter`这 2 个函数并不需要关心其他的模块,这就是合理切割逻辑的好处。
+
+<Description
+  title={
+    <Dot type="success">
+      <span style={{ fontSize: '0.8rem !important;' }}>3.如虎添翼</span>
+    </Dot>
+  }
+  content="这一部分将会将详细的补充get与set的逻辑做到性能优化也是本文的重点内容。"
+/>
+
+我们通过 MDN 可以得知`proxy`只能代理一层对象,如果我们需要深度代理那么就需要递归。这个思路有了就好实现接下来的逻辑了。
+
+```js
+const hasOwnProperty = (target, key) =>
+  Object.prototype.hasOwnProperty.call(target, key)
+
+const isObj = (target) => typeof target === 'object' && target !== null
+const isEqual = (pre, old) => pre === old
+
+const createGetter = () => {
+  return function get(target, key, receiver) {
+    const res = Reflect.get(target, key, receiver)
+    if (isObj(res)) return reactive(res)
+    return res
+  }
+}
+
+const createSetter = () => {
+  return function set(target, key, value, receiver) {
+    const oldVal = target[key]
+    const hasExist = hasOwnProperty(target, key)
+    const res = Reflect.set(target, key, value, receiver)
+    if (!hasExist) {
+      //... todo
+    } else if (!isEqual(value, oldVal)) {
+      // ...todo
+    }
+    return res
+  }
+}
+```
+
+上述的代码便是 mini`reactive`的全部核心内容,至于上面的`setter`的逻辑判断便是优化操作了。
+
+<Spacer y="1" />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
