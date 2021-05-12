@@ -1,0 +1,31 @@
+import Layout from 'lib/components/layout'
+import { Card, Image, Text, Link, Spacer } from '@geist-ui/react'
+
+export const meta = {
+  title: '友情链接',
+  date: '2021-05-12T03:12:20.173Z',
+  description: '',
+}
+
+这里是小楽楽的友站列表,排名不分先后
+
+<Spacer y={2} />
+
+<Link target="_blank" href="https://www.zzsin.com/" title="ZigZaSin">
+  <Card width="270px" hoverable shadow>
+    <Image
+      src="https://www.zzsin.com/resource/logo_yuveye.jpg"
+      height="150"
+      width="150"
+      style={{ objectFit: 'cover' }}
+    />
+    <Text h4 style={{ marginBottom: '0', textAlign: 'center' }}>
+      ZigZagSin
+    </Text>
+    <Text type="secondary">致力于最好的音频解决方案</Text>
+  </Card>
+</Link>
+
+<Spacer y={5} />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>

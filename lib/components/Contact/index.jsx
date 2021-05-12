@@ -41,7 +41,6 @@ function Contact({ children, ...rest }) {
 
 const IcpContainer = () => {
   const flag = BLOG.record
-  console.log(flag)
   return (
     <div>
       {flag && (
