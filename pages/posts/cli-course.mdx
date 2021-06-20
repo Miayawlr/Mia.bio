@@ -1,0 +1,243 @@
+import Layout from 'lib/components/layout'
+import { Link, Dot, Image, Spacer, Snippet } from '@geist-ui/react'
+
+export const meta = {
+  title: '从零开始的Cli系列-01',
+  date: '2021-06-20T13:58:30.698Z',
+  description: '',
+}
+
+关于书写这篇文章的动机是在`fect-ui`暂告一段时间。`fect-ui`也从当时的`vue-cli`到现在的`vue-cli + rollup`的构建方式,但是随着`fect`相关周边项目的诞生,`vue-cli`,`vite`,`rollup`
+已经不能简单的满足开发需求了。在我苦于为各个项目单独维护着近似重复的配置文件时,我便萌生了开发`fect-cli`专门服务于`fect`。做自己的`UI`库就像各大组件库那样怎么能没有自己的 `cli` 工具呢。
+
+既然有了想法,就需要实践设计。关于`cli`我们可以选择`webpack`进行基础构建。<Link href="https://github.com/fay-org/fect-cli" target="_blank" color icon>_项目仓库_</Link>
+
+<h4>
+  <Dot type="success" />
+  创建项目
+</h4>
+
+我们可以创建一个名为`cli`的文件夹 然后 运行 `npm init -y`。这样我们可以得到一个初始的项目目录。关于语言构建的选择,在这里我采用的是 `typescript`。这时候我们可以把项目结构按照以下建好
+
+<Image.Browser url="https://vue.miaya.art/introduce">
+  <Image
+    width="540"
+    height="246"
+    src="https://user-images.githubusercontent.com/52351095/122677445-d33b7480-d214-11eb-8e8f-e1b3ffe3850e.png"
+  />
+</Image.Browser>
+
+有了目录结构,我们便要思考我们的功能准备了,既然是个`cli`就得像`vue-cli`那样能够提供个`vue.config.js`的配置文件方便用户自定义相关内容。既然我们做的是为了特定项目而存在的`cli`那么他必定会和我们的业务有一定的关联,
+于是我们便有了一份任务清单。
+
+<ul>
+  <li>
+    <Dot type="success" /> 内置集成 .jsx | .vue 的支持。
+  </li>
+  <li>
+    <Dot type="success" /> 内置集成 css | less 的支持。
+  </li>
+  <li>
+    <Dot type="success" /> 向外暴露一个可配置的`config.js` 文件。
+  </li>
+  <li>
+    <Dot type="success" /> 向外提供`build`,`dev`,`lint`的命令集。
+  </li>
+  <li>
+    <Dot type="success" /> 如果打包的是组件库自动生成 组件库相关的模块
+    和Vetur代码提示。
+  </li>
+  <li>
+    <Dot type="success" /> 内置集成代码风格管理,单元测试。
+  </li>
+</ul>
+以上的内容便是我们得到的任务需求,接下来的时间我会按照需求节点依次往下实现对应的功能模块。
+
+<Spacer y="0.5" />
+
+<h4>
+  <Dot type="success" />
+  集成配置
+</h4>
+
+在我们集成相关配置的时候我们需要安装对应的依赖包进行开发,这里我们使用`yarn`进行包依赖管理。
+
+<Snippet
+  text={[
+    'yarn add webpack @types/webpack',
+    'fs-extra @types/fs-extra',
+    '@types/node',
+    'webpack-dev-server @types/webpack-dev-server',
+  ]}
+  width="300px;"
+  toastText="复制成功"
+/>
+
+上面的命令集初步配置了我们`typescript`的开发环境。这时候我们在把之前的`tsconfig.json`中输入以下配置。
+
+<Image.Browser url="https://www.typescriptlang.org/docs/handbook/compiler-options.html">
+  <Image
+    width="540"
+    height="246"
+    src="https://user-images.githubusercontent.com/52351095/122678480-b2295280-d219-11eb-9d5f-84f12c4c3613.png"
+  />
+</Image.Browser>
+
+这时候我们进入`src/config`文件夹为我们的项目进行初始的`webpack`配置,在这里我假设你已经有了相关的`webpack`的基础知识,我们发现既然我们创建的是`webapck`的初始配置,我们便需要编写对应的`interface`以及`resolve.extensions`对应的解析文件后缀。<Link link="https://webpack.docschina.org/configuration/resolve/#resolveextensions" target="_blank" color icon>文档地址</Link>
+这时候我们为了重用这个里面的解析字段我们可以把它定义到之前创建的`shared`目录里面。这时候我们在该目录下创建`constant.ts`文件存储`cli`相关的常量以及一些`reg`方法。
+为了语义化我们得把脚本和样式部分分开,这样做的目的是可以更好的维护。
+
+```javascript
+export const SCRIPT_EXTENSISONS = ['.js', '.ts', '.jsx', '.tsx', '.vue']
+export const STYLE_EXTENSISONS = ['.css', '.less']
+```
+
+这时候我们在`shared`目录下创建`types.ts`存储`cli`相关的类型声明
+
+```javascript
+import type webpack from 'webpack'
+import { WebpackPluginInstance } from 'webpack'
+import type WebpackDevServer from 'webpack-dev-server'
+
+export type webpackConfig = webpack.Configuration & {
+  devServer?: WebpackDevServer.Configuration,
+}
+
+export type webpackPlugins = WebpackPluginInstance
+```
+
+在我们为定义完上述内容后,我们回到之前的`webpack.base.ts`文件。进行对应的配置开发。
+
+```js
+import { STYLE_EXTENSISONS, SCRIPT_EXTENSISONS } from '../shared/constant'
+import { webpackConfig, webpackPlugins } from '../shared/types'
+
+export const baseConfig: webpackConfig = {
+  mode: 'development',
+  resolve: {
+    extensions: [...SCRIPT_EXTENSISONS, ...STYLE_EXTENSISONS],
+  },
+}
+```
+
+既然上面的任务我们提到了`jsx,vue`和`css,less`这样的文件那么我们就需要对应的`loader`。
+
+<Snippet
+  text={[
+    'yarn add css-loader style-loader',
+    'vue vue-loader',
+    '@vue/compiler-sfc @vue/babel-plugin-jsx',
+    'babel-loader',
+    'less less-loader',
+  ]}
+  width="300px;"
+  toastText="复制成功"
+/>
+
+这时候我们安装完了依赖便可以接着配置了
+
+```js
+const CSS_BASE_LOADERS = ['style-loader','css-loader',]
+
+
+module: {
+  rules: [
+      {
+        test: /\.vue$/,
+        use: [
+          {
+            loader: 'vue-loader',
+            options: {
+              compilerOptions: {
+                preserveWhitespace: false,
+              },
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(js|ts|jsx|tsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.css$/,
+        sideEffects: true,
+        use: CSS_BASE_LOADERS,
+      },
+      {
+        test: /\.less$/,
+        sideEffects: true,
+        use: [...CSS_BASE_LOADERS, 'less-loader'],
+      },
+    ],
+},
+
+```
+
+上述的配置文件没什么好说的,都是为了解析相关文件的配置内容,至于我们抽离了`CSS_BASE_LOADERS`是为了方便解耦维护。这时候我们已经配置完毕比基础的`webpack.base.ts`。但是细心的你可能已经发现我们缺少了对`plugins`的配置。
+下面我将配置这一块的内容。
+
+因为我们要考虑到用户可能会采用`typescript`构建项目,因此我们需要提供`typescript`的支持。
+
+<Snippet
+  text={[
+    'yarn add typescript',
+    'fork-ts-checker-webpack-plugin',
+    '@babel/plugin-transform-typescript @babel/preset-typescript',
+  ]}
+  width="300px;"
+  toastText="复制成功"
+/>
+
+这里我们采取一个现有成熟的方案<Link href="https://segmentfault.com/q/1010000019545436" target="_blank" color icon>_资料相关_</Link>
+这时候我们切入到`shared/constant`继续定义一些常量, <Link href="https://github.com/fay-org/fect-cli/blob/master/src/shared/constant.ts" target="_blank" color icon>_代码地址_</Link>
+
+这里我将解析下为什么要有这个`findRootDir `函数,这个是为了方便确定当前目录是编译目录。尽可能的做到项目隔离。
+
+```js
+import { TS_CONFIG } from '../shared/constant'
+import { existsSync } from 'fs-extra'
+import { VueLoaderPlugin } from 'vue-loader'
+import { ForkTsCheckerWebpackPlugin } from 'fork-ts-checker-webpack-plugin/lib/ForkTsCheckerWebpackPlugin'
+
+const setPlugins = (): webpackPlugins[] => {
+  const plugins = [new VueLoaderPlugin()]
+  if (existsSync(TS_CONFIG)) {
+    plugins.push(
+      new ForkTsCheckerWebpackPlugin({
+        typescript: {
+          extensions: {
+            vue: {
+              enabled: true,
+              compiler: '@vue/compiler-sfc',
+            },
+          },
+        },
+        logger: {
+          issues: 'console',
+        },
+      })
+    )
+  }
+  return plugins
+}
+
+const setPlugins = (): webpackPlugins[] => {
+  ... // 上述的配置代码,
+   plugins: setPlugins(),
+}
+
+```
+
+为了加快构建速度,我们可以为配置文件添加缓存`cache`属性。完整的代码参阅<Link href="https://github.com/fay-org/fect-cli/blob/master/src/config/webpack.base.ts" target="_blank" color icon>_代码地址_</Link>
+
+<h4>
+  <Dot type="success" />
+  结语
+</h4>
+到这里我们便完成了`shared/constant`,`shared/types`,`config/webpack.base.ts`。
+
+<Spacer />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
