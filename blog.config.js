@@ -2,7 +2,7 @@ const BLOG = {
   author: '楽',
   title: '楽-どなんた関係ても、全部終わる',
   introduce: '我是楽.一个前端萌新',
-  summary: '一个无名的前端萌新',
+  summary: 'A writer , writing fairy tales',
   language: 'zh-cn',
   email: '812137533@qq.com',
   github: 'https://github.com/XeryYue',

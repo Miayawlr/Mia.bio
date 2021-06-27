@@ -1,0 +1,200 @@
+import Layout from 'lib/components/layout'
+import { Link, Dot, Image, Spacer, Snippet } from '@geist-ui/react'
+
+export const meta = {
+  title: '从零开始的Cli系列-02',
+  date: '2021-06-27T06:06:15.815Z',
+  description: '',
+}
+
+接上文,在<Link href="/posts/cli-course" color>从零开始的 Cli 系列-01</Link>中,我们简单的完成了`cli`项目的基础配置,虽然他目前还无法运行。
+在本章节我们将会让他运行起来。
+
+上一个章节我们提到了`config.js`这么一个配置文件。那么我们就从这个作为切入点进行项目的构建,在我们使用`webpack`的时候,我们观察到我们需要提供一个入口
+以及端口供`HtmlWebpackPlugin`和`devServer`使用。那么我们就可以把我们的`config.js`按照如下配置进行预设。
+
+```js
+const path = require('path')
+
+module.exports = {
+  name: 'fect',
+  host: 'localhost',
+  port: 8080,
+  site: {
+    entry: path.resolve(__dirname, './src/main.ts'),
+  },
+}
+```
+
+按照上述的配置我们便有了一份基础的`config.js`方便我们管理项目。那么我们要如何把这个非`webpack`的配置合入到我们的`cli`呢。这时候我们要借助`webpack-merge`和`lodash`
+方便我们快速操作。
+
+<Snippet
+  text={['yarn add webpack-merge lodash @types/lodash']}
+  width="300px;"
+  toastText="复制成功"
+/>
+
+<p>
+  <Dot type="success" />
+  在我们安装完上述依赖以后,先进入到`shared/constant`目录,添加如下的全局变量接着把我们之前的
+  config 改成`config.default.js`这个是为了让我们有个默认的预设配置,剩余的配置都是通过这个项目里用户设置的`config.js`
+  进行合并。
+</p>
+
+```js
+export const FECT_CONFIG_FILE = resolve(ROOT, './fect.config.js')
+```
+
+<p>
+  <Dot type="success" />
+  然后我们在`shared`目录下接着创建`config-info`文件进行对`config.js`文件进行合并配置操作。
+</p>
+
+```js
+import { existsSync } from 'fs-extra'
+import { resolve } from 'path'
+import { FECT_CONFIG_FILE, ROOT } from './constant'
+import { get, merge } from 'lodash'
+
+export const getFectConfig = () => {
+  const config =
+    (existsSync(FECT_CONFIG_FILE) && require(FECT_CONFIG_FILE)) || {}
+  const mergedConfig = merge(require('../../fect.config.default.js'), config)
+  return mergedConfig
+}
+```
+
+接着在`config`目录下创建一个`webpack.site.dev.ts`的文件,下面的代码片段只节选了重要部分。<Link href="https://github.com/fay-org/fect-cli/blob/master/src/config/webpack.site.dev.ts" color icon target="_blank">代码仓库</Link>
+
+```js
+import merge from 'webpack-merge'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import { get } from 'lodash'
+import { resolve } from 'path'
+import { baseConfig } from './webpack.base'
+import { getFectConfig } from '../shared/config-info'
+import { ROOT } from '../shared/constant'
+import { webpackConfig, webpackPlugins } from '../shared/types'
+
+const setPlugins = (): webpackPlugins[] => {
+  const plugins = [
+    new HtmlWebpackPlugin({
+      template: resolve(ROOT, './public/index.html'),
+    }),
+  ]
+  return plugins
+}
+
+export const getSiteDevConfig = (): webpackConfig => {
+  const port = get(fectConfig, 'port')
+  const host = get(fectConfig, 'host')
+  const site = get(fectConfig, 'site')
+  const webpack = get(fectConfig, 'webpack', {})
+  return merge(
+    baseConfig,
+    {
+      entry: resolve(ROOT, site.entry),
+      devServer: {
+        port,
+        host,
+        hot: true,
+        stats: 'errors-only',
+        publicPath: '/',
+        disableHostCheck: true,
+      },
+      output: {
+        chunkFilename: '[name].js',
+      },
+      optimization: {
+        splitChunks: {
+          cacheGroups: {
+            chunks: {
+              chunks: 'all',
+              minChunks: 2,
+              minSize: 0,
+              name: 'chunks',
+            },
+          },
+        },
+      },
+      plugins: setPlugins(),
+    },
+    webpack
+  )
+}
+```
+
+上述的一系列操作我们便完成了`dev`环境的配置。现在我们想要做到的就是让他能跑起来。分别切入到`src/commands`,`src/compiler`目录。创建`dev.ts`,`compile-site.ts`
+
+<Image.Browser url="https://github.com/fay-org/fect-cli/blob/master/src/compiler/compile-site.ts">
+  <Image
+    width="540"
+    height="246"
+    src="https://user-images.githubusercontent.com/52351095/123535417-387ff000-d756-11eb-896b-b105a3624d2d.png"
+  />
+</Image.Browser>
+
+我们先看`compile-site.ts`文件。我们并没有借助`webpack serve --config`的方式进行`dev`环境的调试,我们得借助`node api`的方式更精确的去做这个操作。
+
+```js
+const runServer = (port: number, config: webpackConfig) => {
+  const server = new WebpackDevServer(webpack(config) as any, config.devServer)
+
+  ;(server as any).showStatus = function () {}
+  const { host } = config.devServer as any
+
+  server.listen(port, host, (err?: Error) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+}
+```
+
+上述这部分代码便是`node`环境下的运行方式 , 有了手动运行的方式那么我们接着就是要调用。这里为了区分环境,我们把`dev`命名为`watch`这个方法。`getPort`是一个依赖项,当我们的端口被占用时,会自动帮我们切换到一个新的端口,
+`logServerInfo`只是为了让我们打印出端口的运行信息。
+
+```js
+
+export const watch = () => {
+  const config = getSiteDevConfig()
+  const host = config.devServer?.host
+  getPort(
+    {
+      port: config.devServer!.port,
+    },
+    (err, port) => {
+      if (err) {
+        return console.log(err)
+      }
+      runServer(port, config)
+      logServerInfo(port, host)
+    }
+  )
+}
+
+export const compileSite = () =>  watch()
+```
+
+完成了上述这些配置我们便可以开发我们的`dev`了。回到`commands/dev`完成`dev`的开发。
+
+```js
+import { setNodeEnv } from '../shared/environment'
+import { compileSite } from '../compiler/compile-site'
+
+export const dev = async () => {
+  setNodeEnv('development')
+  compileSite()
+}
+
+dev()
+```
+
+到这里文章以及接近尾声,这一章节我不打算介绍`commander`的相关只是为了简单快速的调试我们的`dev`命令让你有个清晰的认知我们所做的功能都是干嘛的。
+这时候我们可以往`pacakges.json`的`script`字段中添加`ts-node ./src/commands/dev.ts`。同时在根目录下创建`public/index.html` 这时候我们便可以指定一个随意的
+入口方便我们调试我们的`dev`是否可以正常运行了。
+
+<Spacer />
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>
